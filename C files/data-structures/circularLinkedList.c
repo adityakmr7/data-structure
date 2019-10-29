@@ -1,9 +1,11 @@
 #include<stdio.h>
-#include<conio.h>
 #include<stdlib.h>
-#include<string.h>
-struct node *front=NULL;
-struct node *rear=NULL;
+
+#ifndef __unix__
+    #include<conio.h>
+#endif
+
+struct node *head=NULL;
 struct node
 {
 	int key;
@@ -13,17 +15,24 @@ void ins_at_beg(int k)
 {
 	struct node *temp;
 	temp=(struct node *)malloc(sizeof(struct node));
-	if(front==NULL)
+	if(head==NULL)
 	{
 		temp->key=k;
-		temp->addr=NULL;
-		front=rear=temp;
+		temp->addr=temp;
+		head=temp;
 	}
 	else
 	{
+		struct node *a;
+		a=head;
+		while(a->addr!=head)
+		{
+			a=a->addr;
+		}
+		a->addr=temp;
 		temp->key=k;
-		temp->addr=front;
-		front=temp;
+		temp->addr=head;
+		head=temp;
 		
 	}
 }
@@ -31,32 +40,48 @@ void ins_at_end(int k)
 {
 	struct node *temp;
 	temp=(struct node *)malloc(sizeof(struct node));
-	if(front==NULL)
+	if(head==NULL)
 	{
 		temp->key=k;
-		temp->addr=NULL;
-		front=rear=temp;
+		temp->addr=head;
+		head=temp;
 	}
 	else
 	{
-	rear->addr=temp;
+	struct node *a;
+	a=head;
+	while(a->addr!=head)
+	{
+		a=a->addr;
+	}
+	a->addr=temp;
 	temp->key=k;
-	temp->addr=NULL;
-	rear=temp;
+	temp->addr=head;
 	}
 }
 void ins_at_pos(int k,int pos)
 {
 	struct node *temp;
 	temp=(struct node *)malloc(sizeof(struct node));
-	if(pos==1)
+	if(head==NULL)
 	{
 		ins_at_beg(k);
+	}
+    else if(head->addr==head)
+    {
+    	if(pos==1)
+    	{
+    		ins_at_beg(k);
+		}
+		else if(pos==2)
+		{
+			ins_at_end(k);
+		}
 	}
 	else
 	{
 		struct node *a;
-		a=front;
+		a=head;
 		int i=1;
 		while(i<pos-1)
 		{
@@ -70,65 +95,76 @@ void ins_at_pos(int k,int pos)
 }
 void del_at_beg()
 {
-	if(front==NULL)
+	if(head==NULL)
 	{
 		printf("No nodes available!\n");
 	}
-	else if(front==rear)
+	else if(head->addr==head)
 	{
-		front=rear=NULL;
-		free(front);
+		head=NULL;
+		free(head);
 	}
 	else
 	{
 	 struct node *a;
-	 a=front->addr;
-	 front->addr=NULL;
-	 free(front);
-	 front=a;
+	a=head;
+	while(a->addr!=head)
+	{
+		a=a->addr;
+	}
+	a->addr=head->addr;
+	free(head);
+	head=a->addr;
 	}
 }
 void del_at_end()
 {
-	if(front==NULL)
+	if(head==NULL)
 	{
 		printf("No nodes available!\n");
 	}
-	else if(front==rear)
+	else if(head->addr==head)
 	{
-		front=rear=NULL;
-		free(front);
+		head=NULL;
+		free(head);
 	}
 	else
 	{
-		struct node *a;
-		a=front;
-		while(a->addr!=rear)
+		struct node *a,*temp;
+		a=head;
+		while(a->addr->addr!=head)
 		{
 			a=a->addr;
 		}
-		a->addr=NULL;
-		free(rear);
-		rear=a;
+		temp=a->addr;
+		a->addr=head;
+		free(temp);
+		temp=NULL;
 	}
 }
 void del_at_pos(int pos)
 {
-	if(front==NULL)
+	if(head==NULL)
 	{
 		printf("No nodes available!\n");
 	}
-	else if(front==rear)
+	else if(head->addr==head)
 	{
-		front=rear=NULL;
-		free(front);
+		if(pos==1)
+		{
+			del_at_beg();
+		}
+		else if(pos==2)
+		{
+			del_at_end();
+		}
 	}
 	else
 	{
 		int i=1;
 		struct node *a,*temp;
-		a=front;
-		while(i<pos-1)
+		a=head;
+		while((a->addr!=head)&&(i<pos-1))
 		{
 			a=a->addr;
 			i++;
@@ -141,20 +177,21 @@ void del_at_pos(int pos)
 }
 void print()
 {
-	if(front==NULL)
+	if(head==NULL)
 	{
 		printf("No nodes\n");
 	}
 	else
 	{
 		struct node *a;
-		a=front;
+		a=head;
 		printf("The elements are:\n");
-		while(a!=NULL)
+		while(a->addr!=head)
 		{
 			printf("%d\n",a->key);
 			a=a->addr;
 		}
+		printf("%d\n",a->key);
 		
 	}
 }
