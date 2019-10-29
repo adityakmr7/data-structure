@@ -179,4 +179,3 @@ void displayList()
         }
     }
 }
-Output
