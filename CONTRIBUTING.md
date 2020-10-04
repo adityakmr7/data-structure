@@ -8,3 +8,4 @@
 4. BiswaViraj (<https://github.com/BiswaViraj>)
 5. Shubham Goswami (https://github.com/shubham2704)
 6. Aditi Bansal (https://github.com/bansaladiti)
+7. Evelyn Souza (https://github.com/blueevee)
